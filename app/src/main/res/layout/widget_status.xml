@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_w_cream"
+    android:orientation="vertical"
+    android:padding="8dp">
+
+    <LinearLayout
+        android:id="@+id/row_a"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="horizontal">
+        <LinearLayout
+            android:id="@+id/card_approvals"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_margin="3dp"
+            android:layout_weight="1"
+            android:background="@drawable/bg_chip"
+            android:gravity="center"
+            android:orientation="vertical">
+            <TextView
+                android:id="@+id/num_approvals"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="-"
+                android:textColor="#1A1A1F"
+                android:textSize="26sp"
+                android:textStyle="bold" />
+            <TextView
+                android:id="@+id/lbl_approvals"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="approvals"
+                android:textColor="#1A1A1F"
+                android:textSize="11sp" />
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/card_overdue"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_margin="3dp"
+            android:layout_weight="1"
+            android:background="@drawable/bg_chip"
+            android:gravity="center"
+            android:orientation="vertical">
+            <TextView
+                android:id="@+id/num_overdue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="-"
+                android:textColor="#1A1A1F"
+                android:textSize="26sp"
+                android:textStyle="bold" />
+            <TextView
+                android:id="@+id/lbl_overdue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="overdue"
+                android:textColor="#1A1A1F"
+                android:textSize="11sp" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/row_b"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="horizontal">
+        <LinearLayout
+            android:id="@+id/card_today"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_margin="3dp"
+            android:layout_weight="1"
+            android:background="@drawable/bg_chip"
+            android:gravity="center"
+            android:orientation="vertical">
+            <TextView
+                android:id="@+id/num_today"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="-"
+                android:textColor="#1A1A1F"
+                android:textSize="26sp"
+                android:textStyle="bold" />
+            <TextView
+                android:id="@+id/lbl_today"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="due today"
+                android:textColor="#1A1A1F"
+                android:textSize="11sp" />
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/card_working"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_margin="3dp"
+            android:layout_weight="1"
+            android:background="@drawable/bg_chip"
+            android:gravity="center"
+            android:orientation="vertical">
+            <TextView
+                android:id="@+id/num_working"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="-"
+                android:textColor="#1A1A1F"
+                android:textSize="26sp"
+                android:textStyle="bold" />
+            <TextView
+                android:id="@+id/lbl_working"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="working now"
+                android:textColor="#1A1A1F"
+                android:textSize="11sp" />
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>

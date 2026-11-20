@@ -1,0 +1,20 @@
+<resources>
+    <string name="app_name">Murmur Companion</string>
+    <string name="settings_title">Companion settings</string>
+    <string name="pair_title">Connect to Murmur</string>
+    <string name="widget_ask_label">Ask your agent</string>
+    <string name="widget_last_label">Last reply</string>
+    <string name="widget_status_label">Status cards</string>
+    <string name="tile_chat_label">Companion chat</string>
+    <string name="tile_voice_label">Companion voice</string>
+    <string name="tile_approvals_label">Approvals</string>
+    <string name="channel_replies">Replies</string>
+    <string name="channel_asks">Questions and approvals</string>
+    <string name="channel_status">Connection</string>
+    <string name="widget_brief_label">Morning brief</string>
+    <string name="widget_stat_label">One number</string>
+    <string name="widget_capture_label">Voice capture</string>
+    <string name="tile_capture_label">Capture</string>
+    <string name="needs_label">Needs you</string>
+    <string name="channel_routines">Routine runs</string>
+</resources>

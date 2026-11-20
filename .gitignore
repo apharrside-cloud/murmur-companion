@@ -1,0 +1,12 @@
+relay/data/
+local.properties
+.gradle/
+build/
+*.apk
+scripts/env.sh
+relay/start_relay.pyw
+*.keystore
+*.jks
+keystore.properties
+.env
+node_modules/

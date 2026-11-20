@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+    <shortcut android:shortcutId="new_chat" android:enabled="true" android:icon="@drawable/ic_chat" android:shortcutShortLabel="@string/tile_chat_label">
+        <intent android:action="com.pharrlabs.murmur.NEW_CHAT" android:targetPackage="com.pharrlabs.murmur" android:targetClass="com.pharrlabs.murmur.MainActivity" />
+    </shortcut>
+    <shortcut android:shortcutId="settings" android:enabled="true" android:icon="@drawable/ic_settings" android:shortcutShortLabel="@string/settings_title">
+        <intent android:action="android.intent.action.VIEW" android:targetPackage="com.pharrlabs.murmur" android:targetClass="com.pharrlabs.murmur.SettingsActivity" />
+    </shortcut>
+    <shortcut android:shortcutId="capture" android:enabled="true" android:icon="@drawable/ic_mic" android:shortcutShortLabel="@string/tile_capture_label">
+        <intent android:action="android.intent.action.VIEW" android:targetPackage="com.pharrlabs.murmur" android:targetClass="com.pharrlabs.murmur.CaptureActivity" />
+    </shortcut>
+</shortcuts>

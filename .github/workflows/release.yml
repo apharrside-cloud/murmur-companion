@@ -1,0 +1,130 @@
+name: Release
+
+# Every push to main that touches the app builds, tests, signs and publishes a GitHub Release
+# (APK + SHA256SUMS.txt). The version is the latest tag + 1 patch, so contributors never bump it.
+# The first release is v0.1.0.
+on:
+  push:
+    branches: [main]
+    paths:
+      - "app/**"
+      - "relay/**"
+      - "build.gradle.kts"
+      - "settings.gradle.kts"
+      - "gradle.properties"
+      - "gradle/**"
+  workflow_dispatch:
+    inputs:
+      force:
+        description: "Release even if HEAD is already tagged"
+        type: boolean
+        default: false
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Work out the next version
+        id: ver
+        run: |
+          git fetch --tags --force
+          LAST=$(git tag -l 'v[0-9]*' --sort=-v:refname | head -n1)
+          echo "Latest tag: ${LAST:-none}"
+          if [ -n "$LAST" ] && [ "$(git rev-list -n1 "$LAST")" = "$(git rev-parse HEAD)" ] && [ "${{ inputs.force }}" != "true" ]; then
+            echo "skip=true" >> "$GITHUB_OUTPUT"; exit 0
+          fi
+          if [ -z "$LAST" ]; then MA=0; MI=1; PA=0
+          else IFS=. read -r MA MI PA <<< "${LAST#v}"; PA=$((PA + 1)); fi
+          echo "skip=false" >> "$GITHUB_OUTPUT"
+          echo "name=$MA.$MI.$PA" >> "$GITHUB_OUTPUT"
+          echo "code=$((MA * 10000 + MI * 100 + PA))" >> "$GITHUB_OUTPUT"
+          echo "last=$LAST" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/setup-node@v4
+        if: steps.ver.outputs.skip != 'true'
+        with: { node-version: 20 }
+
+      - name: Relay tests
+        if: steps.ver.outputs.skip != 'true'
+        run: cd relay && npm test
+
+      - uses: actions/setup-java@v4
+        if: steps.ver.outputs.skip != 'true'
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - uses: gradle/actions/setup-gradle@v4
+        if: steps.ver.outputs.skip != 'true'
+
+      - name: Install Android SDK pieces
+        if: steps.ver.outputs.skip != 'true'
+        run: |
+          yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --licenses > /dev/null || true
+          "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" "platforms;android-35" "build-tools;35.0.0"
+
+      - name: App unit tests
+        if: steps.ver.outputs.skip != 'true'
+        run: |
+          chmod +x gradlew
+          ./gradlew --no-daemon :app:testDebugUnitTest
+
+      - name: Build signed APK
+        if: steps.ver.outputs.skip != 'true'
+        env:
+          KEYSTORE_B64: ${{ secrets.MN_KEYSTORE_B64 }}
+          MN_KEYSTORE_PASSWORD: ${{ secrets.MN_KEYSTORE_PASSWORD }}
+          MN_KEY_ALIAS: ${{ secrets.MN_KEY_ALIAS }}
+          MN_KEY_PASSWORD: ${{ secrets.MN_KEY_PASSWORD }}
+        run: |
+          echo "$KEYSTORE_B64" | base64 -d > "$RUNNER_TEMP/release.keystore"
+          {
+            echo "storeFile=$RUNNER_TEMP/release.keystore"
+            echo "storePassword=$MN_KEYSTORE_PASSWORD"
+            echo "keyAlias=$MN_KEY_ALIAS"
+            echo "keyPassword=$MN_KEY_PASSWORD"
+          } > "$RUNNER_TEMP/ks.properties"
+          export MN_KEYSTORE_PROPS="$RUNNER_TEMP/ks.properties"
+          ./gradlew --no-daemon :app:assembleRelease \
+            -PmnVersionName="${{ steps.ver.outputs.name }}" -PmnVersionCode="${{ steps.ver.outputs.code }}"
+          mkdir -p out
+          cp app/build/outputs/apk/release/app-release.apk "out/murmur-companion-${{ steps.ver.outputs.name }}.apk"
+          rm -f "$RUNNER_TEMP/release.keystore" "$RUNNER_TEMP/ks.properties"
+          cd out && sha256sum "murmur-companion-${{ steps.ver.outputs.name }}.apk" | tee SHA256SUMS.txt
+
+      - name: Verify signature and version
+        if: steps.ver.outputs.skip != 'true'
+        run: |
+          APK="out/murmur-companion-${{ steps.ver.outputs.name }}.apk"
+          "$ANDROID_HOME"/build-tools/35.0.0/apksigner verify --print-certs "$APK" | tee out/cert.txt
+          grep -q "Signer #1 certificate SHA-256" out/cert.txt
+          "$ANDROID_HOME"/build-tools/35.0.0/aapt2 dump badging "$APK" | grep -E "versionName='${{ steps.ver.outputs.name }}'"
+
+      - name: Publish release
+        if: steps.ver.outputs.skip != 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          V="${{ steps.ver.outputs.name }}"
+          LAST="${{ steps.ver.outputs.last }}"
+          {
+            echo "## What's new"
+            if [ -n "$LAST" ]; then git log "$LAST"..HEAD --no-merges --pretty='- %s'; else echo "- First public release."; fi
+            echo
+            echo "**You need Murmur and the companion relay running first.** Read [docs/SETUP.md](https://github.com/${{ github.repository }}/blob/main/docs/SETUP.md) before installing."
+            echo
+            echo "SHA-256: \`$(cut -d' ' -f1 out/SHA256SUMS.txt)\`"
+          } > notes.md
+          gh release create "v$V" "out/murmur-companion-$V.apk" out/SHA256SUMS.txt --title "Murmur Companion $V" --notes-file notes.md --target "${{ github.sha }}"

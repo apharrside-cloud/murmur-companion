@@ -1,0 +1,18 @@
+<resources>
+    <color name="murmur_bg">#FCF6E6</color>
+    <color name="launcher_bg">#FD7D1A</color>
+    <color name="murmur_violet">#7C6CF0</color>
+    <color name="ink">#1A1A1F</color>
+
+    <style name="AppTheme" parent="@android:style/Theme.DeviceDefault.Light.NoActionBar">
+        <item name="android:windowBackground">@color/murmur_bg</item>
+        <item name="android:windowLayoutInDisplayCutoutMode">shortEdges</item>
+    </style>
+    <style name="QuickAskTheme" parent="@android:style/Theme.DeviceDefault.Light.Dialog.NoActionBar">
+        <item name="android:windowBackground">@drawable/bg_dialog</item>
+        <item name="android:backgroundDimEnabled">true</item>
+    </style>
+    <style name="ConfigTheme" parent="@android:style/Theme.DeviceDefault.Light.NoActionBar">
+        <item name="android:windowBackground">@color/murmur_bg</item>
+    </style>
+</resources>

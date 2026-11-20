@@ -1,0 +1,15 @@
+{
+  "name": "murmur-companion-relay",
+  "version": "0.1.0",
+  "description": "The computer half of Murmur Companion: an unofficial Android companion app for Murmur (Hermes Agent's web interface).",
+  "type": "module",
+  "license": "MIT",
+  "private": true,
+  "engines": { "node": ">=20" },
+  "scripts": {
+    "start": "node relay.mjs",
+    "pair": "node relay.mjs pair",
+    "doctor": "node relay.mjs doctor",
+    "test": "node --test lib.test.mjs threads.test.mjs config.test.mjs && node test.mjs"
+  }
+}
